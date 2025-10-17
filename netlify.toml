@@ -1,0 +1,7 @@
+[build]
+  # Publicar desde la raíz del repositorio (archivos estáticos en el root)
+  publish = "."
+
+[dev]
+  # Netlify CLI usa este directorio para el modo dev si se necesita
+  publish = "."
