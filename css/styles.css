@@ -166,3 +166,21 @@ footer{
     font-size:85%;
     margin:0
 }
+
+/* Match game helpers */
+.game-controls{display:flex;gap:10px;margin-bottom:12px}
+.match-board{display:flex;gap:24px;align-items:flex-start}
+.images-col,.labels-col{display:flex;flex-direction:column;gap:12px}
+.draggable{width:90px;height:90px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;padding:6px}
+.draggable img{max-width:100%;max-height:100%;object-fit:contain}
+.drop-target{min-width:140px;min-height:60px;border:2px dashed var(--border);border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:center;background:var(--white)}
+.drop-target.filled{border-style:solid;background:var(--option-selected-bg)}
+.small-note{font-size:90%;color:var(--muted);margin-top:8px}
+
+.pager-controls{display:flex;gap:8px;margin-bottom:10px}
+
+@media (max-width:520px){
+    .match-board{flex-direction:column}
+    .images-col{flex-direction:row;flex-wrap:nowrap;overflow:auto;padding-bottom:6px}
+    .draggable{width:80px;height:80px}
+}
