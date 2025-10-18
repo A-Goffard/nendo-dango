@@ -153,9 +153,9 @@ p {
     /* tamaño de la imagen */
     height: 80px;
     /* mantiene proporción cuadrada */
-    margin: 10px;
+
     border: 2px solid transparent;
-    border-radius: 5px;
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: border 0.3s, transform 0.2s;
 }
