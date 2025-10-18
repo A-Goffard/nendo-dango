@@ -13,6 +13,7 @@ const nextButton = document.getElementById("next-level");
 // Botón OK para final del juego
 const popupOk = document.createElement("button");
 popupOk.textContent = "OK";
+popupOk.classList.add("menu-button");
 popupOk.style.display = "none";
 messageBox.appendChild(popupOk);
 
