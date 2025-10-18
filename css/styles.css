@@ -22,6 +22,7 @@
     margin: 0;
     padding: 0;
 }
+
 html,
 body {
     height: 100%;
@@ -29,11 +30,13 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 body {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     background-color: var(--megashoftgreen);
     color: var(--darkgrey);
 }
+
 .container {
     max-width: 360px;
     margin: 0 auto;
@@ -46,6 +49,7 @@ body {
     flex-direction: column;
     flex: 1;
 }
+
 .logo-main {
     max-width: 200px;
     margin-bottom: 20px;
@@ -61,14 +65,17 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
 h1 {
     margin-top: 0.8rem;
     margin-bottom: 0.8rem;
 }
+
 h2 {
     margin-top: 0.8rem;
     margin-bottom: 0.8rem;
 }
+
 p {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
@@ -87,6 +94,7 @@ p {
     transition: 0.2s;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
+
 .btn:hover {
     background-color: var(--green);
 }
@@ -99,13 +107,15 @@ p {
     border-radius: 5px;
     margin-top: 1em;
     cursor: pointer;
-    max-width: 200px;  /* ancho máximo */
-    width: auto; 
+    max-width: 200px;
+    /* ancho máximo */
+    width: auto;
 }
 
 .btn.secondary:hover {
     background-color: var(--darkgreen);
 }
+
 #exitBtn {
     margin-top: 2rem;
 }
@@ -116,7 +126,8 @@ p {
     margin: 0.5em;
     border: none;
     border-radius: 5px;
-    background-color: var(--lightbrown); /* color base */
+    background-color: var(--lightbrown);
+    /* color base */
     color: var(--black);
     cursor: pointer;
     transition: background 0.3s;
@@ -138,8 +149,10 @@ p {
 }
 
 .options img.option {
-    width: 80px;       /* tamaño de la imagen */
-    height: 80px;      /* mantiene proporción cuadrada */
+    width: 80px;
+    /* tamaño de la imagen */
+    height: 80px;
+    /* mantiene proporción cuadrada */
     margin: 10px;
     border: 2px solid transparent;
     border-radius: 5px;
@@ -156,11 +169,13 @@ p {
     flex-direction: column;
 
 }
+
 .semilla-flor {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
 }
+
 .options img.option.selected {
     border-color: var(--lightgreen);
 }
@@ -171,6 +186,66 @@ p {
 
 .options img.option.wrong {
     border-color: #dc3545;
+}
+
+
+/* juego match */
+#gameContainer {
+    max-width: 450px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#seedOptions,
+#flowerOptions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.img-container {
+    position: relative;
+}
+
+.option {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+
+.option:hover {
+    transform: scale(1.05);
+}
+
+.selected {
+    border-color: #00aaff;
+}
+
+.correct {
+    border-color: green;
+}
+
+.wrong {
+    border-color: red;
+}
+
+.emoji {
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    font-size: 22px;
+}
+
+#feedback {
+    font-weight: bold;
+    margin-top: 10px;
+    min-height: 25px;
 }
 
 /* Plant name */
@@ -188,15 +263,13 @@ p {
 }
 
 
-img{
+img {
     border-radius: 0.5rem;
 }
 
 /* footer styles */
 .footer-content {
     margin-top: 1rem;
-    max-width: 760px;
-
     padding: 12px 18px;
     display: flex;
     align-items: center;

@@ -2,8 +2,8 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Emparejar Imágenes - Bombas de semillas</title>
     <link rel="stylesheet" href="../../css/styles.css">
 </head>
@@ -22,8 +22,11 @@
         <h3>Opciones de Flores:</h3>
         <div id="flowerOptions" class="options semilla-flor"></div>
 
+        <!-- feedback visible debajo de las opciones -->
+        <div id="feedback" class="result" aria-live="polite"></div>
+
         <div class="bloque">
-            <button id="nextBtn" class="btn">Siguiente</button>
+            <button id="nextBtn" class="btn" disabled>Siguiente</button>
             <button class="btn secondary" id="salirmenu">Salir al Menú</button>
         </div>
     </main>

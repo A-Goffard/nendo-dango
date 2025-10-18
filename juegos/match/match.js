@@ -1,5 +1,5 @@
+// match.js — versión corregida: comparaciones con URLs absolutas + recordatorio si no responde
 document.addEventListener("DOMContentLoaded", () => {
-
   const plants = [
     { label: "Hinojo", seed: "../../assets/imagenes/semillas/1.png", flower: "../../assets/imagenes/flores/16.png" },
     { label: "Ajenuz", seed: "../../assets/imagenes/semillas/2.png", flower: "../../assets/imagenes/flores/21.png" },
@@ -19,119 +19,197 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let currentIndex = 0;
-  let selectedSeed = null;
-  let selectedFlower = null;
+  let selectedSeed = null;      // almacena URL absoluta
+  let selectedFlower = null;    // almacena URL absoluta
   let score = 0;
 
   const plantNameEl = document.getElementById("plantName");
   const seedOptionsEl = document.getElementById("seedOptions");
   const flowerOptionsEl = document.getElementById("flowerOptions");
   const nextBtn = document.getElementById("nextBtn");
+  const feedbackEl = document.getElementById("feedback");
   const exitBtn = document.getElementById("salirmenu");
 
-  // Botón salir al menú
-  exitBtn.addEventListener("click", () => {
-    window.location.href = '../../index.html';
-  });
-
-  // Función para mezclar opciones
-  function shuffle(array) {
-    return array.sort(() => Math.random() - 0.5);
+  if (!plantNameEl || !seedOptionsEl || !flowerOptionsEl || !nextBtn || !feedbackEl || !exitBtn) {
+    console.error("match.js: falta algún elemento DOM requerido.");
+    return;
   }
 
-  // Cargar planta actual
-  function loadPlant(index) {
+  exitBtn.addEventListener("click", () => { window.location.href = "../../index.html"; });
+
+  function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+  function absUrl(rel) {
+    // normaliza ruta relativa a URL absoluta coherente
+    return new URL(rel, location.href).href;
+  }
+
+  function resetContainers() {
+    seedOptionsEl.innerHTML = "";
+    flowerOptionsEl.innerHTML = "";
+    feedbackEl.textContent = "";
+    feedbackEl.style.color = "";
     selectedSeed = null;
     selectedFlower = null;
-    nextBtn.disabled = true;
+    nextBtn.disabled = false; // dejamos enabled para que el usuario vea el recordatorio si intenta avanzar sin responder
+    nextBtn.removeAttribute("data-feedback");
+  }
 
+  function createOption(src, containerEl, onSelect) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "img-container";
+
+    const img = document.createElement("img");
+    img.src = src;                 // src relativo visible
+    img.dataset.abs = absUrl(src); // almacena URL absoluta para comparaciones
+    img.className = "option";
+    img.loading = "lazy";
+    img.alt = "";
+
+    const emoji = document.createElement("span");
+    emoji.className = "emoji";
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(emoji);
+    containerEl.appendChild(wrapper);
+
+    img.addEventListener("click", () => {
+      // Si estamos en modo feedback (después de pulsar Next y antes de avanzar), no permitimos cambiar selección
+      if (nextBtn.getAttribute("data-feedback") === "on") return;
+      onSelect(img.dataset.abs, img, wrapper);
+    });
+
+    return { wrapper, img, emoji };
+  }
+
+  function loadPlant(index) {
+    resetContainers();
     const plant = plants[index];
     plantNameEl.textContent = plant.label;
 
-    // --- Semillas ---
-    let seedChoices = [plant.seed];
-    while (seedChoices.length < 3) {
-      const rand = plants[Math.floor(Math.random() * plants.length)].seed;
-      if (!seedChoices.includes(rand)) seedChoices.push(rand);
+    // seeds
+    const seedPool = [plant.seed];
+    while (seedPool.length < 3) {
+      const candidate = plants[Math.floor(Math.random() * plants.length)].seed;
+      if (!seedPool.includes(candidate)) seedPool.push(candidate);
     }
-    seedChoices = shuffle(seedChoices);
-
-    seedOptionsEl.innerHTML = '';
-    seedChoices.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.classList.add('option');
-      img.addEventListener('click', () => {
-        if (nextBtn.disabled === false) return; // no cambiar selección mientras se muestra feedback
-        selectedSeed = src;
-        seedOptionsEl.querySelectorAll('img').forEach(el => el.classList.remove('selected'));
-        img.classList.add('selected');
-        if (selectedSeed && selectedFlower) nextBtn.disabled = false;
+    shuffle(seedPool).forEach(src => {
+      createOption(src, seedOptionsEl, (abs, imgEl) => {
+        selectedSeed = abs;                      // guardamos URL absoluta
+        seedOptionsEl.querySelectorAll("img").forEach(i => i.classList.remove("selected"));
+        imgEl.classList.add("selected");
+        feedbackEl.textContent = "";
       });
-      seedOptionsEl.appendChild(img);
     });
 
-    // --- Flores ---
-    let flowerChoices = [plant.flower];
-    while (flowerChoices.length < 3) {
-      const rand = plants[Math.floor(Math.random() * plants.length)].flower;
-      if (!flowerChoices.includes(rand)) flowerChoices.push(rand);
+    // flowers
+    const flowerPool = [plant.flower];
+    while (flowerPool.length < 3) {
+      const candidate = plants[Math.floor(Math.random() * plants.length)].flower;
+      if (!flowerPool.includes(candidate)) flowerPool.push(candidate);
     }
-    flowerChoices = shuffle(flowerChoices);
-
-    flowerOptionsEl.innerHTML = '';
-    flowerChoices.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.classList.add('option');
-      img.addEventListener('click', () => {
-        if (nextBtn.disabled === false) return;
-        selectedFlower = src;
-        flowerOptionsEl.querySelectorAll('img').forEach(el => el.classList.remove('selected'));
-        img.classList.add('selected');
-        if (selectedSeed && selectedFlower) nextBtn.disabled = false;
+    shuffle(flowerPool).forEach(src => {
+      createOption(src, flowerOptionsEl, (abs, imgEl) => {
+        selectedFlower = abs;
+        flowerOptionsEl.querySelectorAll("img").forEach(i => i.classList.remove("selected"));
+        imgEl.classList.add("selected");
+        feedbackEl.textContent = "";
       });
-      flowerOptionsEl.appendChild(img);
     });
   }
 
-  // --- Botón siguiente ---
-  nextBtn.addEventListener('click', () => {
+  function showFeedbackForCurrentPlant() {
     const plant = plants[currentIndex];
+    const plantSeedAbs = absUrl(plant.seed);
+    const plantFlowerAbs = absUrl(plant.flower);
 
-    // Mostrar feedback: correcto en verde, incorrecto en rojo
-    seedOptionsEl.querySelectorAll('img').forEach(img => {
-      img.classList.remove('selected');
-      if (img.src.includes(plant.seed)) img.classList.add('correct');
-      else if (img.src === selectedSeed) img.classList.add('wrong');
+    let correctSeed = false;
+    let correctFlower = false;
+
+    // marcar semillas
+    seedOptionsEl.querySelectorAll(".img-container").forEach(c => {
+      const img = c.querySelector("img");
+      const emoji = c.querySelector(".emoji");
+      // limpiar posibles clases
+      c.classList.remove("correct", "wrong");
+      emoji.textContent = "";
+
+      if (img.dataset.abs === plantSeedAbs) {
+        c.classList.add("correct");
+        emoji.textContent = "✅";
+        if (selectedSeed === img.dataset.abs) correctSeed = true;
+      } else if (selectedSeed === img.dataset.abs) {
+        c.classList.add("wrong");
+        emoji.textContent = "❌";
+      }
     });
 
-    flowerOptionsEl.querySelectorAll('img').forEach(img => {
-      img.classList.remove('selected');
-      if (img.src.includes(plant.flower)) img.classList.add('correct');
-      else if (img.src === selectedFlower) img.classList.add('wrong');
+    // marcar flores
+    flowerOptionsEl.querySelectorAll(".img-container").forEach(c => {
+      const img = c.querySelector("img");
+      const emoji = c.querySelector(".emoji");
+      c.classList.remove("correct", "wrong");
+      emoji.textContent = "";
+
+      if (img.dataset.abs === plantFlowerAbs) {
+        c.classList.add("correct");
+        emoji.textContent = "✅";
+        if (selectedFlower === img.dataset.abs) correctFlower = true;
+      } else if (selectedFlower === img.dataset.abs) {
+        c.classList.add("wrong");
+        emoji.textContent = "❌";
+      }
     });
 
-    // Contar aciertos
-    if (selectedSeed === plant.seed) score++;
-    if (selectedFlower === plant.flower) score++;
+    // texto de feedback
+    if (correctSeed && correctFlower) {
+      score++;
+      feedbackEl.textContent = "✅ ¡Muy bien! Ambas selecciones son correctas.";
+      feedbackEl.style.color = "green";
+    } else if (correctSeed || correctFlower) {
+      score += 0.5;
+      feedbackEl.textContent = "🟡 Has acertado una de las dos.";
+      feedbackEl.style.color = "orange";
+    } else {
+      feedbackEl.textContent = "❌ Ambas selecciones son incorrectas.";
+      feedbackEl.style.color = "red";
+    }
+  }
 
+  // handler nextBtn
+  nextBtn.addEventListener("click", () => {
+    // Si aún no ha seleccionado ambas opciones, damos recordatorio (no avanzamos)
+    if (!selectedSeed || !selectedFlower) {
+      feedbackEl.textContent = "Por favor, selecciona una semilla y una flor antes de continuar.";
+      feedbackEl.style.color = "var(--darkbrown)" || "brown";
+      // limpiamos el mensaje en 2s para que el usuario no quede atascado visualmente
+      setTimeout(() => { if (feedbackEl.textContent.includes("Por favor")) feedbackEl.textContent = ""; }, 2000);
+      return;
+    }
+
+    // activamos modo feedback para bloquear cambios de selección
+    nextBtn.setAttribute("data-feedback", "on");
     nextBtn.disabled = true;
 
-    // Esperar 1.5 segundos antes de pasar a la siguiente planta
+    // mostramos quién era correcto y quién no
+    showFeedbackForCurrentPlant();
+
+    // esperar 1.5s y avanzar
     setTimeout(() => {
+      nextBtn.removeAttribute("data-feedback");
       currentIndex++;
       if (currentIndex >= plants.length) {
-        plantNameEl.textContent = '¡Has completado el juego!';
-        seedOptionsEl.innerHTML = `<p>Tu puntuación: ${score} / ${plants.length*2}</p>`;
-        flowerOptionsEl.innerHTML = '';
-        nextBtn.style.display = 'none';
+        plantNameEl.textContent = "🌿 ¡Juego completado!";
+        seedOptionsEl.innerHTML = `<p>Tu puntuación: ${score} / ${plants.length}</p>`;
+        flowerOptionsEl.innerHTML = "";
+        feedbackEl.textContent = "";
+        nextBtn.style.display = "none";
       } else {
         loadPlant(currentIndex);
       }
     }, 1500);
   });
 
-  // Inicializar primera planta
+  // iniciar
   loadPlant(currentIndex);
 });
