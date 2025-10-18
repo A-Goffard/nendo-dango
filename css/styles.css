@@ -26,7 +26,7 @@
 html,
 body {
     height: 100%;
-    margin: 0;
+    margin: 0.5rem;
     display: flex;
     flex-direction: column;
 }
@@ -52,7 +52,7 @@ body {
 
 .logo-main {
     max-width: 200px;
-    margin-bottom: 20px;
+
 }
 
 .nolink {
@@ -67,18 +67,18 @@ body {
 }
 
 h1 {
-    margin-top: 0.8rem;
-    margin-bottom: 0.8rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
 }
 
 h2 {
-    margin-top: 0.8rem;
-    margin-bottom: 0.8rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 
 p {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
 }
 
 /* Botones */
@@ -86,8 +86,8 @@ p {
     background-color: var(--lightgreen);
     color: var(--white);
     border: none;
-    padding: 10px 20px;
-    margin: 10px 5px;
+    padding: 0.5rem 1.25rem;
+    margin: 0.3rem 0.5rem;
     font-size: 1em;
     cursor: pointer;
     border-radius: 5px;
